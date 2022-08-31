@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>G6 Tutorial</title>
+</head>
+
+<body>
+
+  <div id="mountNode"></div>
+
+  <!-- Import G6 -->
+  <script src="https://gw.alipayobjects.com/os/antv/pkg/_antv.g6-3.7.1/dist/g6.min.js"></script>
+
+  <script>
+
+    const data = {
+      nodes: [
+        {
+          id: 'node1',
+          x: 100,
+          y: 200,
+          label: 'start',
+        },
+        {
+          id: 'node2',
+          x: 300,
+          y: 200,
+          label: 'end',
+        },
+      ],
+      edges: [
+        {
+          source: 'node1',
+          target: 'node2',
+          label: 'edge1-2',
+        }
+      ]
+    }
+
+
+    const graph = new G6.Graph({
+      container: 'mountNode', // 指定挂载图的容器
+      width: 800,
+      height: 500,
+      // fitView: true, // 自动适应容器大小
+      // fitViewPadding: [20, 40, 50, 20], // 自动适应容器大小时的内边距
+      
+    })
+
+
+    const main = async () => {
+      // Fetch data from remote
+      const response = await fetch('https://gw.alipayobjects.com/os/basement_prod/6cae02ab-4c29-44b2-b1fd-4005688febcb.json')
+      const remoteData = await response.json()
+
+      graph.data(remoteData)
+      graph.render()
+    }
+
+    main()
+  </script>
+
+
+
+
+</body>
+
+
+
+</html>

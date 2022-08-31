@@ -21,6 +21,7 @@ const CourseCard = ({ subject, courseID, name, description, onClick }) => {
 
           <CardActions>
             <Button size="small">Wanna take</Button>
+            
           </CardActions>
 
         </Card>
@@ -30,3 +31,6 @@ const CourseCard = ({ subject, courseID, name, description, onClick }) => {
 }
 
 export default CourseCard
+
+// button: set/unset wanna take (message bar + undo option)
+// link to other courses (prereq, unlocks)
