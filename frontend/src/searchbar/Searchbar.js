@@ -13,6 +13,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import { fakeIndex, fakeCourseResult } from './mockData'
 import CourseCard from './CourseCard';
+import axios from 'axios'
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -65,15 +66,26 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 
 const Searchbar = () => {
+  const [trie, setTrie] = useState({})
   const [index, setIndex] = useState({})
   const [searchText, setSearchText] = useState('')
   const [courseResult, setCourseResult] = useState([])
-  const [pinnedResult, setPinnedResult] = useState([])
 
   // Fetch the index from django backend
   // "key word/phrase": ["CSE 21", "Math 154", "CSE 101"]
   useEffect(() => {
-    setIndex(fakeIndex)
+    axios.get('http://127.0.0.1:8000/api/trie')
+      .then(res => {
+        setTrie(res.data)
+        console.log(res.data)
+      })
+
+    axios.get('http://127.0.0.1:8000/api/index')   
+      .then(res => {
+        setIndex(res.data)
+        // console.log(res.data)
+      })
+
   }, [])
 
 
@@ -90,8 +102,8 @@ const Searchbar = () => {
     console.log("searching", searchText)
     if (searchText) {
 
-      // TODO: pull matched data from backend. 
-      setCourseResult(fakeCourseResult)
+      // TODO: search for matched words in the trie
+      setCourseResult(fakeCourseResult)  // TODO
       // setKeywords(keywords)   // set keywords to be highlighted in the card
       console.log(courseResult)
     }
@@ -119,7 +131,7 @@ const Searchbar = () => {
             </SearchIconWrapper>
             <StyledInputBase
               placeholder="Search…"
-              inputProps={{ 'aria-label': 'search', 'autofocus': 'true' }}
+              inputProps={{ 'aria-label': 'search', 'autoFocus': 'true' }}
               onChange={handleChange}
             />
           </Search>
@@ -127,7 +139,7 @@ const Searchbar = () => {
       </AppBar>
 
 
-      <pre>{JSON.stringify(index)}</pre>
+      {/* <pre>{JSON.stringify(index)}</pre> */}
       <br />
 
       <Drawer
