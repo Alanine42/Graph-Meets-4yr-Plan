@@ -69,7 +69,7 @@ const Searchbar = () => {
   const [trie, setTrie] = useState({})
   const [index, setIndex] = useState({})
   const [searchText, setSearchText] = useState('')
-  const [courseResult, setCourseResult] = useState([])
+  const [courseResult, setCourseResult] = useState({})
 
   // Fetch the index from django backend
   // "key word/phrase": ["CSE 21", "Math 154", "CSE 101"]
@@ -77,10 +77,10 @@ const Searchbar = () => {
     axios.get('http://127.0.0.1:8000/api/trie')
       .then(res => {
         setTrie(res.data)
-        console.log(res.data)
+        // console.log(res.data)
       })
 
-    axios.get('http://127.0.0.1:8000/api/index')   
+    axios.get('http://127.0.0.1:8000/api/index')
       .then(res => {
         setIndex(res.data)
         // console.log(res.data)
@@ -89,27 +89,68 @@ const Searchbar = () => {
   }, [])
 
 
+  // Give suggestions of possible search words based on the input prefix
+  // TODO: handle spaces between words
+  const getSuggestions = (text) => {
+    if (trie === {}) return []
+    const limit = 3
+    let output = []
+    let node = trie
+    for (const char of text.toLowerCase()) {
+      if (!node.hasOwnProperty(char)) {
+        return output
+      }
+      node = node[char]
+    }
+
+    let stack = [node]
+    while (stack.length) {
+      let node = stack.pop()
+      Object.keys(node).forEach((child) => {
+        if (child === '#') {
+          output.push(node['#'])
+          if (output.length > limit) return output
+        }
+        else {
+          stack.push(node[child])
+        }
+      })
+    }
+
+    return output
+  }
+
   // User entered some search word
   const handleChange = (e) => {
     let text = e.target.value
     setSearchText(text)
 
-
+    if (text) {
+      console.log(text)
+      let suggestedWords = getSuggestions(text)
+      //TODO: May be the user only wants to search for a single word. 
+      console.log(suggestedWords)
+      let coursesIndices = {}
+      for (const word of suggestedWords) {
+        if (word in index) {
+          // console.log(index[word])
+          for (const course of Object.keys(index[word])) {
+            // console.log(course)
+            if (!(course in coursesIndices)) {
+              coursesIndices[course] = [[], []]
+            }
+            coursesIndices[course][0].push(...index[word][course][0])
+            coursesIndices[course][1].push(...index[word][course][1])
+          }
+        }
+      }
+      setCourseResult(coursesIndices)
+    }
   }
 
-  // When `searchText` updates
   useEffect(() => {
-    console.log("searching", searchText)
-    if (searchText) {
-
-      // TODO: search for matched words in the trie
-      setCourseResult(fakeCourseResult)  // TODO
-      // setKeywords(keywords)   // set keywords to be highlighted in the card
-      console.log(courseResult)
-    }
-
-  }, [searchText])
-
+    console.log(courseResult)
+  }, [courseResult])
 
   // only when the search bar has text in it, will it display the search page.
   // Other times, the page displays graph data structure
@@ -150,7 +191,7 @@ const Searchbar = () => {
         PaperProps={{
           sx: { height: "85%" },
         }}
-        // disableAutoFocus
+      // disableAutoFocus
       >
 
         <Grid2
@@ -160,9 +201,11 @@ const Searchbar = () => {
 
         >
 
-          {searchText ? (courseResult.map(course =>
-            <CourseCard courseID={course.id} name={course.name} description={course.description} />
-          )) : null}
+          {Object.entries(courseResult).map(([courseName, indices]) => (
+            <CourseCard />
+
+            
+          ))}
 
         </Grid2>
       </Drawer>

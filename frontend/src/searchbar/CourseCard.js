@@ -4,7 +4,7 @@ import React from 'react'
 
 // Display one course module
 // highlight relevant parts
-const CourseCard = ({ subject, courseID, name, description, onClick }) => {
+const CourseCard = ({ courseName, description, onClick }) => {
   return (
     <Grid2 
     item 
@@ -16,7 +16,7 @@ const CourseCard = ({ subject, courseID, name, description, onClick }) => {
     >
       <a onClick={onClick}>
         <Card>
-          <CardContent>{courseID + " " + name}</CardContent>
+          <CardContent>{courseName}</CardContent>
           <CardContent>{description}</CardContent>
 
           <CardActions>
