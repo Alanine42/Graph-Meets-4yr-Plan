@@ -5,5 +5,6 @@ urlpatterns = [
     # path('', views.getData),
     path('trie', views.getTrie),
     path('index', views.getIndex),
+    path('prereqs', views.getPrereqs),
     
 ]

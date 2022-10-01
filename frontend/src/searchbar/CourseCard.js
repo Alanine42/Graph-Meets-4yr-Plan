@@ -4,7 +4,7 @@ import React from 'react'
 
 // Display one course module
 // highlight relevant parts
-const CourseCard = ({ courseName, description, onClick }) => {
+const CourseCard = ({ courseName, description, indicesToHighlight, highlightLength, onClick }) => {
   return (
     <Grid2 
     item 

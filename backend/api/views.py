@@ -16,6 +16,14 @@ def getIndex(request):
         data = json.load(f)
         return Response(data)
     
-
-
+    
+# Full Name
+# Description
+# Prerequisites: [cID]
+# Unlocks:  [cID]
+@api_view(['GET'])
+def getPrereqs(request):
+    with open(os.path.dirname(__file__)+'/../../prereqsSuccint.json', 'r') as f:
+        data = json.load(f)
+        return Response(data)
 

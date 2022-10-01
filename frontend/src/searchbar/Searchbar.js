@@ -70,6 +70,8 @@ const Searchbar = () => {
   const [index, setIndex] = useState({})
   const [searchText, setSearchText] = useState('')
   const [courseResult, setCourseResult] = useState({})
+  const [cache, setCache] = useState({})
+  const [prereqs, setPrereqs] = useState({})
 
   // Fetch the index from django backend
   // "key word/phrase": ["CSE 21", "Math 154", "CSE 101"]
@@ -84,6 +86,12 @@ const Searchbar = () => {
       .then(res => {
         setIndex(res.data)
         // console.log(res.data)
+      })
+
+    axios.get('http://127.0.0.1:8000/api/prereqs')
+      .then(res => {      
+        console.log(res.data)
+        setPrereqs(res.data)
       })
 
   }, [])
@@ -128,8 +136,8 @@ const Searchbar = () => {
     if (text) {
       console.log(text)
       let suggestedWords = getSuggestions(text)
-      //TODO: May be the user only wants to search for a single word. 
       console.log(suggestedWords)
+      // Get courses (that have suggestedWords) from index
       let coursesIndices = {}
       for (const word of suggestedWords) {
         if (word in index) {
@@ -137,19 +145,31 @@ const Searchbar = () => {
           for (const course of Object.keys(index[word])) {
             // console.log(course)
             if (!(course in coursesIndices)) {
-              coursesIndices[course] = [[], []]
+              coursesIndices[course] = [[], [], '',''] // [indices of words in title, indices of words in description, course title, course description]
             }
             coursesIndices[course][0].push(...index[word][course][0])
             coursesIndices[course][1].push(...index[word][course][1])
           }
         }
       }
+
+      console.log(coursesIndices)
+
+      // 1. Fetch the course description from django backend OR local cache (TODO: Redis?)
+
+
+  
+
       setCourseResult(coursesIndices)
     }
   }
 
+  // Update course cards displayed with search words highlighted. 
   useEffect(() => {
     console.log(courseResult)
+
+
+
   }, [courseResult])
 
   // only when the search bar has text in it, will it display the search page.
@@ -179,10 +199,6 @@ const Searchbar = () => {
         </Toolbar>
       </AppBar>
 
-
-      {/* <pre>{JSON.stringify(index)}</pre> */}
-      <br />
-
       <Drawer
         open={searchText !== ''}
         anchor={'bottom'}
@@ -191,20 +207,16 @@ const Searchbar = () => {
         PaperProps={{
           sx: { height: "85%" },
         }}
-      // disableAutoFocus
       >
 
         <Grid2
-
           container
           spacing={{ xs: 2, md: 3 }}
-
         >
 
           {Object.entries(courseResult).map(([courseName, indices]) => (
-            <CourseCard />
+            <CourseCard courseName={courseName} />
 
-            
           ))}
 
         </Grid2>
