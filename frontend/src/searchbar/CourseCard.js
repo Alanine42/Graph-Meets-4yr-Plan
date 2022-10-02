@@ -4,7 +4,7 @@ import React from 'react'
 
 // Display one course module
 // highlight relevant parts
-const CourseCard = ({ courseName, description, indicesToHighlight, highlightLength, onClick }) => {
+const CourseCard = ({ cName, cDescription, onClick }) => {
   return (
     <Grid2 
     item 
@@ -16,8 +16,10 @@ const CourseCard = ({ courseName, description, indicesToHighlight, highlightLeng
     >
       <a onClick={onClick}>
         <Card>
-          <CardContent>{courseName}</CardContent>
-          <CardContent>{description}</CardContent>
+        <p dangerouslySetInnerHTML={{__html: cDescription}}></p>
+          <CardContent>{cName}</CardContent>
+          <CardContent>{cDescription}</CardContent>
+          {/* <CardContent>{<mark>Hey</mark>}</CardContent> */}
 
           <CardActions>
             <Button size="small">Wanna take</Button>

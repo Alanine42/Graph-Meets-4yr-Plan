@@ -6,5 +6,6 @@ urlpatterns = [
     path('trie', views.getTrie),
     path('index', views.getIndex),
     path('prereqs', views.getPrereqs),
+    path('courseDetail/<str:cID>', views.getCourseDetail),
     
 ]

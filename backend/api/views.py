@@ -27,3 +27,17 @@ def getPrereqs(request):
         data = json.load(f)
         return Response(data)
 
+@api_view(['GET'])
+def getCourseDetail(request, cID): 
+    with open(os.path.dirname(__file__)+'/../../mongodb_crawler/courseObjects.json', 'r') as f:
+        # O(N)
+        for line in f:
+            courseObject = json.loads(line)
+            # CSE-110
+            if courseObject['cID'].split() == cID.split('_'):
+                data = {}
+                data['name'] = courseObject['cName']
+                data['description'] = courseObject['cDescription']
+                return Response(data)
+        
+    
